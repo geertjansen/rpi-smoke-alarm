@@ -1,12 +1,22 @@
 const rpio = require("rpio");
 const { Subject, race, timer } = require("rxjs");
-const { bufferCount, distinctUntilChanged, exhaustMap, filter, mapTo} = require("rxjs/operators");
+const {
+  bufferCount,
+  distinctUntilChanged,
+  exhaustMap,
+  filter,
+  mapTo,
+  tap,
+} = require("rxjs/operators");
 
 module.exports = {
   _sensorState: new Subject(),
 
   _onStateChange: function () {
-    return this._sensorState.asObservable().pipe(distinctUntilChanged());
+    return this._sensorState.asObservable().pipe(
+      distinctUntilChanged(),
+      tap((onOff) => console.log(`--${onOff}`))
+    );
   },
 
   _pollcb() {
@@ -28,10 +38,18 @@ module.exports = {
   onAlarm: function () {
     const blinks$ = this._onStateChange().pipe(filter((state) => !!state));
     return blinks$.pipe(
+      tap(() => "initial blink"),
       exhaustMap(() =>
         race(
-          timer(5000).pipe(mapTo(false)),
-          blinks$.pipe(bufferCount(2), mapTo(true))
+          timer(5000).pipe(
+            tap(() => console.log("5 seconds gone")),
+            mapTo(false)
+          ),
+          blinks$.pipe(
+            bufferCount(2),
+            tap(() => console.log("2 more click")),
+            mapTo(true)
+          )
         )
       ),
       filter((thresholdPassed) => thresholdPassed)
