@@ -48,6 +48,7 @@ module.exports = {
           blinks$.pipe(
             bufferCount(2),
             tap(() => console.log("2 more click")),
+            take(1),
             mapTo(true)
           )
         )
