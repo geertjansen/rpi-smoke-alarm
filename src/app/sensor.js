@@ -11,7 +11,7 @@ module.exports = {
   _sensorState: new Subject(),
 
   _onStateChange: function () {
-    return this._buttonState.asObservable().pipe(
+    return this._sensorState.asObservable().pipe(
       debounceTime(100),
       distinctUntilChanged(),
       tap(console.log),
@@ -21,18 +21,18 @@ module.exports = {
 
   _pollcb(pin) {
     rpio.msleep(20);
-    this._buttonState.next(rpio.read(7));
+    this._sensorState.next(rpio.read(7));
   },
 
   start: function () {
     rpio.open(7, rpio.INPUT, rpio.PULL_UP);
     rpio.poll(7, this._pollcb.bind(this), rpio.POLL_LOW);
-    console.log("button started");
+    console.log("sensor started");
   },
 
   stop: function () {
     rpio.close(7);
-    console.log("button stopped");
+    console.log("sensor stopped");
   },
 
   onBright: function () {
