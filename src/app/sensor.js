@@ -1,13 +1,6 @@
 const rpio = require("rpio");
-const { Subject, race } = require("rxjs");
-const {
-  buffer,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  tap,
-} = require("rxjs/operators");
+const { Subject, race, timer } = require("rxjs");
+const { distinctUntilChanged, filter, exhaustMap } = require("rxjs/operators");
 
 module.exports = {
   _sensorState: new Subject(),
@@ -34,12 +27,14 @@ module.exports = {
   /** blinks at least 3 times within 5 seconds */
   onAlarm: function () {
     const blinks$ = this._onStateChange().pipe(filter((state) => !!state));
-    const buffer$ = blinks$.pipe(debounceTime(5000));
     return blinks$.pipe(
-      buffer(buffer$),
-      tap(console.log),
-      map((blinks) => blinks.length),
-      filter((blinkCount) => blinkCount >= 3)
+      exhaustMap(() =>
+        race(
+          timer(5000).pipe(mapTo(false)),
+          blinks$.pipe(bufferCount(2), mapTo(true))
+        )
+      ),
+      filter((thresholdPassed) => thresholdPassed)
     );
   },
 };
