@@ -2,4 +2,6 @@ const { sensor } = require("./src/public-api");
 
 sensor.start();
 
-sensor.onBright().subscribe();
+sensor.onAlarm().subscribe(() => {
+  console.log('alarm');
+});

@@ -1,14 +1,18 @@
 const rpio = require("rpio");
-const { Subject } = require("rxjs");
-const { distinctUntilChanged, filter, tap } = require("rxjs/operators");
+const { Subject, race } = require("rxjs");
+const {
+  buffer,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  mapTo,
+} = require("rxjs/operators");
 
 module.exports = {
   _sensorState: new Subject(),
 
   _onStateChange: function () {
-    return this._sensorState
-      .asObservable()
-      .pipe(distinctUntilChanged(), tap(console.log));
+    return this._sensorState.asObservable().pipe(distinctUntilChanged());
   },
 
   _pollcb() {
@@ -26,11 +30,14 @@ module.exports = {
     console.log("sensor stopped");
   },
 
-  onBright: function () {
-    return this._onStateChange().pipe(filter((pressed) => pressed));
-  },
-
-  onDim: function () {
-    return this._onStateChange().pipe(filter((pressed) => !pressed));
+  /** blinks at least 3 times within 5 seconds */
+  onAlarm: function () {
+    const blinks$ = this._onStateChange().pipe(filter((state) => !!state));
+    const buffer$ = blinks$.pipe(debounceTime(5000));
+    return blinks$.pipe(
+      buffer(buffer$),
+      map((blinks) => blinks.length),
+      filter((blinkCount) => blinkCount > 3)
+    );
   },
 };
