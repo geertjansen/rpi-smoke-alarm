@@ -1,25 +1,17 @@
 const rpio = require("rpio");
 const { Subject } = require("rxjs");
-const {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  tap,
-} = require("rxjs/operators");
+const { distinctUntilChanged, filter, tap } = require("rxjs/operators");
 
 module.exports = {
   _sensorState: new Subject(),
 
   _onStateChange: function () {
-    return this._sensorState.asObservable().pipe(
-      distinctUntilChanged(),
-      tap(console.log)
-    );
+    return this._sensorState
+      .asObservable()
+      .pipe(distinctUntilChanged(), tap(console.log));
   },
 
-  _pollcb(pin) {
-    rpio.msleep(5);
+  _pollcb() {
     this._sensorState.next(rpio.read(7));
   },
 
