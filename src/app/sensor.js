@@ -13,10 +13,10 @@ module.exports = {
 
   _onStateChange: function () {
     return this._sensorState.asObservable().pipe(
-      debounceTime(100),
-      distinctUntilChanged(),
+      // debounceTime(100),
+      // distinctUntilChanged(),
       tap(console.log),
-      map((input) => !input)
+      // map((input) => !input)
     );
   },
 
@@ -26,8 +26,8 @@ module.exports = {
   },
 
   start: function () {
-    rpio.open(8, rpio.INPUT, rpio.PULL_UP);
-    rpio.poll(8, this._pollcb.bind(this), rpio.POLL_LOW);
+    rpio.open(8, rpio.INPUT);
+    rpio.poll(8, this._pollcb.bind(this));
     console.log("sensor started");
   },
 
