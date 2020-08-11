@@ -19,7 +19,7 @@ module.exports = {
   },
 
   _pollcb(pin) {
-    rpio.msleep(20);
+    rpio.msleep(5);
     this._sensorState.next(rpio.read(7));
   },
 
