@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/geertjansen/rpi-smoke-alarm#readme",
   "dependencies": {
+    "rpio": "^2.2.0",
     "rxjs": "^6.6.2"
   }
 }
