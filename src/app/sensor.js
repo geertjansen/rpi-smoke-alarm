@@ -12,12 +12,7 @@ module.exports = {
   _sensorState: new Subject(),
 
   _onStateChange: function () {
-    return this._sensorState.asObservable().pipe(
-      // debounceTime(100),
-      // distinctUntilChanged(),
-      tap(console.log),
-      // map((input) => !input)
-    );
+    return this._sensorState.asObservable().pipe(distinctUntilChanged());
   },
 
   _pollcb(pin) {
