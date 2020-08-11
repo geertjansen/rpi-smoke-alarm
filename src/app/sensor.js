@@ -1,6 +1,6 @@
 const rpio = require("rpio");
 const { Subject, race, timer } = require("rxjs");
-const { distinctUntilChanged, exhaustMap, filter, mapTo} = require("rxjs/operators");
+const { bufferCount, distinctUntilChanged, exhaustMap, filter, mapTo} = require("rxjs/operators");
 
 module.exports = {
   _sensorState: new Subject(),
