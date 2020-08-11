@@ -6,6 +6,7 @@ const {
   distinctUntilChanged,
   filter,
   map,
+  tap,
 } = require("rxjs/operators");
 
 module.exports = {
@@ -36,8 +37,9 @@ module.exports = {
     const buffer$ = blinks$.pipe(debounceTime(5000));
     return blinks$.pipe(
       buffer(buffer$),
+      tap(console.log),
       map((blinks) => blinks.length),
-      filter((blinkCount) => blinkCount > 3)
+      filter((blinkCount) => blinkCount >= 3)
     );
   },
 };
