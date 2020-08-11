@@ -5,7 +5,7 @@ const {
   debounceTime,
   distinctUntilChanged,
   filter,
-  mapTo,
+  map,
 } = require("rxjs/operators");
 
 module.exports = {
