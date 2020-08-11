@@ -22,17 +22,17 @@ module.exports = {
 
   _pollcb(pin) {
     rpio.msleep(20);
-    this._sensorState.next(rpio.read(7));
+    this._sensorState.next(rpio.read(8));
   },
 
   start: function () {
-    rpio.open(7, rpio.INPUT, rpio.PULL_UP);
-    rpio.poll(7, this._pollcb.bind(this), rpio.POLL_LOW);
+    rpio.open(8, rpio.INPUT, rpio.PULL_UP);
+    rpio.poll(8, this._pollcb.bind(this), rpio.POLL_LOW);
     console.log("sensor started");
   },
 
   stop: function () {
-    rpio.close(7);
+    rpio.close(8);
     console.log("sensor stopped");
   },
 
