@@ -2,6 +2,6 @@ const { sensor } = require("./src/public-api");
 
 sensor.start();
 
-sensor.onAlarm().subscribe(() => {
+sensor.onAlarmThresholdPassed().subscribe(() => {
   console.log('alarm');
 });

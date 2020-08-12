@@ -14,10 +14,7 @@ module.exports = {
   _sensorState: new Subject(),
 
   _onStateChange: function () {
-    return this._sensorState.asObservable().pipe(
-      distinctUntilChanged(),
-      tap((onOff) => console.log(`--${onOff}`))
-    );
+    return this._sensorState.asObservable().pipe(distinctUntilChanged());
   },
 
   _pollcb() {
@@ -36,22 +33,13 @@ module.exports = {
   },
 
   /** blinks at least 3 times within 5 seconds */
-  onAlarm: function () {
+  onAlarmThresholdPassed: function () {
     const blinks$ = this._onStateChange().pipe(filter((state) => !!state));
     return blinks$.pipe(
-      tap(() => "initial blink"),
       exhaustMap(() =>
         race(
-          timer(5000).pipe(
-            tap(() => console.log("5 seconds gone")),
-            mapTo(false)
-          ),
-          blinks$.pipe(
-            bufferCount(2),
-            tap(() => console.log("2 more click")),
-            take(1),
-            mapTo(true)
-          )
+          timer(5000).pipe(mapTo(false)),
+          blinks$.pipe(bufferCount(2), take(1), mapTo(true))
         )
       ),
       filter((thresholdPassed) => thresholdPassed)
