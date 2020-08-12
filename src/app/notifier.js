@@ -1,23 +1,23 @@
+const nodemailer = require("nodemailer");
 const logger = require("./logger");
 
 const conf = require("../../mail.conf");
-const mail = require("mail").Mail(conf);
+const transporter = nodemailer.createTransport(conf);
 
 module.exports = {
   sendWarning() {
-    mail
-      .message({
-        from: conf.username,
+    transporter
+      .sendMail({
+        from: "pelmolen17@gmail.com",
         to: ["trigger@applet.ifttt.com"],
         subject: "#smokealarm",
+        text: "WAARSCHUWING: Rookmelder ging af op Pelmolen 17 te Oploo.",
       })
-      .body("WAARSCHUWING: Rookmelder ging af op Pelmolen 17 in Oploo.")
-      .send(function (err) {
-        if (err) {
-          throw err;
-        }
-
+      .then(() => {
         logger.log("Warning sent!");
+      })
+      .catch((error) => {
+        logger.debug(error);
       });
   },
 };
